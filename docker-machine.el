@@ -133,6 +133,26 @@ and FLIP is a boolean to specify the sort order."
   [:description docker-utils-generic-actions-heading
    ("E" "Env" docker-machine-env-selection)])
 
+(defun docker-machine-ssh-one (name)
+  "Start an ssh shell on machine."
+  (interactive (list (docker-machine-read-name)))
+  (sps (concat "docker-machine ssh " name)))
+
+(defun docker-machine-ssh-selection ()
+  "Run \"docker-machine ssh\" on selected machine."
+  (interactive)
+  (let ((marked (docker-utils-get-marked-items-ids)))
+    (when (/= (length marked) 1)
+      (error "Can only set environment vars for one machine at a time"))
+    (docker-machine-ssh-one (car marked))
+    (tablist-revert)))
+
+(docker-utils-define-transient-command docker-machine-ssh ()
+  "Transient for running ssh commands."
+  :man-page "docker-machine-ssh"
+  [:description docker-utils-generic-actions-heading
+                (";" "SSH" docker-machine-ssh-selection)])
+
 (defun docker-machine-ls-arguments ()
   "Return the latest used arguments in the `docker-machine-ls' transient."
   (car (alist-get 'docker-machine-ls transient-history)))
@@ -180,6 +200,7 @@ and FLIP is a boolean to specify the sort order."
    ("C" "Create"     docker-machine-create)
    ("D" "Remove"     docker-machine-rm)
    ("E" "Env"        docker-machine-env-selection)
+   (";" "SSH"        docker-machine-ssh-selection)
    ("O" "Stop"       docker-machine-stop)
    ("R" "Restart"    docker-machine-restart)
    ("S" "Start"      docker-machine-start)
@@ -191,6 +212,7 @@ and FLIP is a boolean to specify the sort order."
     (define-key map "C" 'docker-machine-create)
     (define-key map "D" 'docker-machine-rm)
     (define-key map "E" 'docker-machine-env-selection)
+    (define-key map ";" 'docker-machine-ssh-selection)
     (define-key map "O" 'docker-machine-stop)
     (define-key map "R" 'docker-machine-restart)
     (define-key map "S" 'docker-machine-start)
