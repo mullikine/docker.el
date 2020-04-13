@@ -141,6 +141,7 @@ and FLIP is a boolean to specify the sort order."
 (defun docker-machine-ssh-selection ()
   "Run \"docker-machine ssh\" on selected machine."
   (interactive)
+  (docker-machine-generic-action "start" nil)
   (let ((marked (docker-utils-get-marked-items-ids)))
     (when (/= (length marked) 1)
       (error "Can only set environment vars for one machine at a time"))
